@@ -362,6 +362,7 @@ export default function SeniorRegistrationPage() {
                         type="button"
                         onClick={handleSendCollegeEmailOTP}
                         className="px-4 py-3 bg-secondary text-white rounded-lg hover:opacity-90 transition-opacity font-medium whitespace-nowrap"
+                        suppressHydrationWarning
                       >
                         Send OTP
                       </button>
@@ -387,6 +388,7 @@ export default function SeniorRegistrationPage() {
                         type="button"
                         onClick={handleVerifyCollegeEmailOTP}
                         className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity font-medium"
+                        suppressHydrationWarning
                       >
                         Verify
                       </button>
@@ -434,6 +436,7 @@ export default function SeniorRegistrationPage() {
                         type="button"
                         onClick={handleSendPhoneOTP}
                         className="px-4 py-3 bg-secondary text-white rounded-lg hover:opacity-90 transition-opacity font-medium whitespace-nowrap"
+                        suppressHydrationWarning
                       >
                         Send OTP
                       </button>
@@ -459,6 +462,7 @@ export default function SeniorRegistrationPage() {
                         type="button"
                         onClick={handleVerifyPhoneOTP}
                         className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity font-medium"
+                        suppressHydrationWarning
                       >
                         Verify
                       </button>
