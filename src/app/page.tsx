@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { GraduationCap, CheckCircle, Upload, X, ImageIcon, Check } from "lucide-react";
 import { Navbar } from "../components/Navbar";
 import Image from "next/image";
+import { submitSeniorRegistration } from "../lib/api";
 
 interface FormData {
   // Basic Info
@@ -36,6 +37,10 @@ export default function SeniorRegistrationPage() {
   const [logoError, setLogoError] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
+  // Loading and error states
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  
   // OTP verification states
   const [collegeEmailVerified, setCollegeEmailVerified] = useState(false);
   const [phoneVerified, setPhoneVerified] = useState(false);
@@ -62,7 +67,7 @@ export default function SeniorRegistrationPage() {
     skillsGained: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!collegeEmailVerified) {
@@ -80,9 +85,41 @@ export default function SeniorRegistrationPage() {
       return;
     }
     
-    // Here you would typically send the data to your backend
-    console.log("Form submitted:", formData);
-    setSubmitted(true);
+    setIsSubmitting(true);
+    setSubmitError(null);
+    
+    try {
+      await submitSeniorRegistration({
+        full_name: formData.fullName,
+        call_name: formData.callName,
+        college_email: formData.collegeEmail,
+        personal_email: formData.personalEmail,
+        phone: formData.phone,
+        partner_college: formData.partnerCollege,
+        graduation_year: formData.graduationYear,
+        branch: formData.branch,
+        student_id: formData.studentId,
+        current_status: formData.currentStatus,
+        id_card_image: formData.idCardImage,
+        why_join: formData.whyJoin,
+        best_experience: formData.bestExperience,
+        advice_to_juniors: formData.adviceToJuniors,
+        skills_gained: formData.skillsGained,
+        college_email_verified: collegeEmailVerified,
+        phone_verified: phoneVerified,
+      });
+      
+      setSubmitted(true);
+    } catch (error) {
+      console.error("Registration error:", error);
+      setSubmitError(
+        error instanceof Error 
+          ? error.message 
+          : "Failed to submit registration. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleSendCollegeEmailOTP = () => {
@@ -186,6 +223,8 @@ export default function SeniorRegistrationPage() {
             <button
               onClick={() => {
                 setSubmitted(false);
+                setSubmitError(null);
+                setIsSubmitting(false);
                 setFormData({
                   fullName: "",
                   callName: "",
@@ -676,12 +715,19 @@ export default function SeniorRegistrationPage() {
 
               {/* Submit Button */}
               <div className="pt-4">
+                {submitError && (
+                  <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-sm text-red-600">{submitError}</p>
+                  </div>
+                )}
+                
                 <button
                   type="submit"
-                  className="w-full bg-primary text-primary-foreground py-4 rounded-lg font-semibold text-lg hover:opacity-90 transition-opacity shadow-soft"
+                  disabled={isSubmitting}
+                  className="w-full bg-primary text-primary-foreground py-4 rounded-lg font-semibold text-lg hover:opacity-90 transition-opacity shadow-soft disabled:opacity-50 disabled:cursor-not-allowed"
                   suppressHydrationWarning
                 >
-                  Submit Registration
+                  {isSubmitting ? "Submitting..." : "Submit Registration"}
                 </button>
                 <p className="text-xs text-center text-niat-text-secondary mt-3">
                   By submitting, you agree to our verification process and community guidelines
